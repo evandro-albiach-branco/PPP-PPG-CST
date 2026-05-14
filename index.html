@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Construção do PPP — PPG-CST · INPE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..700&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-0:       #060E1A;
+      --bg-1:       #0A1826;
+      --bg-2:       #0F2236;
+      --bg-3:       #142D45;
+      --blue:       #2196D8;
+      --blue-light: #60B8E8;
+      --teal:       #1EB280;
+      --teal-light: #4DCFA0;
+      --amber:      #D99A25;
+      --amber-light:#EBB850;
+      --coral:      #D95A3A;
+      --coral-light:#F07858;
+      --purple:     #7E6FD4;
+      --purple-light:#A89EE8;
+      --text-0:     #E6F0FA;
+      --text-1:     #8DB4CE;
+      --text-2:     #456A88;
+      --border:     rgba(120,180,220,0.08);
+      --border-2:   rgba(120,180,220,0.16);
+      --border-3:   rgba(120,180,220,0.28);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      background: var(--bg-1);
+      color: var(--text-0);
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 6%;
+      background: rgba(6, 14, 26, 0.82);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--border);
+      transition: background 0.3s;
+    }
+    .nav-brand {
+      font-family: 'Jost', sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-0);
+      text-decoration: none;
+    }
+    .nav-brand em {
+      font-style: normal;
+      color: var(--blue-light);
+      margin: 0 4px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: var(--text-1);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--text-0); }
+    .nav-cta {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--blue-light) !important;
+      border: 1px solid rgba(33,150,216,0.35);
+      padding: 5px 14px;
+      border-radius: 20px;
+      transition: all 0.2s !important;
+    }
+    .nav-cta:hover { background: rgba(33,150,216,0.1) !important; color: white !important; }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      background: var(--bg-0);
+    }
+    .hero-bg-dots {
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(120,180,220,0.18) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+    .hero-bg-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 30% 60%, rgba(33,150,216,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 75% 30%, rgba(30,178,128,0.05) 0%, transparent 55%);
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 760px;
+      padding: 0 6%;
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-light);
+      background: rgba(33,150,216,0.1);
+      border: 1px solid rgba(33,150,216,0.25);
+      padding: 6px 16px;
+      border-radius: 30px;
+      margin-bottom: 32px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--blue-light);
+      animation: pulse 2.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(34px, 5.5vw, 68px);
+      font-weight: 700;
+      font-style: italic;
+      line-height: 1.08;
+      letter-spacing: -0.02em;
+      color: var(--text-0);
+      margin-bottom: 22px;
+    }
+    .hero-title strong {
+      font-style: normal;
+      color: var(--blue-light);
+      font-weight: 700;
+    }
+    .hero-sub {
+      font-size: clamp(15px, 2vw, 17px);
+      font-weight: 300;
+      color: var(--text-1);
+      line-height: 1.8;
+      max-width: 540px;
+      margin: 0 auto 40px;
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue);
+      color: white;
+      text-decoration: none;
+      padding: 13px 26px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #35A8EE; transform: translateY(-2px); }
+    .btn-ghost {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: transparent;
+      color: var(--text-1);
+      text-decoration: none;
+      padding: 13px 26px;
+      border-radius: 8px;
+      border: 1px solid var(--border-2);
+      font-size: 13px;
+      font-weight: 400;
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--border-3); color: var(--text-0); }
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      animation: float 2.2s ease-in-out infinite;
+    }
+    .scroll-hint span { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-2); }
+    .chevron {
+      width: 14px; height: 14px;
+      border-right: 1.5px solid var(--text-2);
+      border-bottom: 1.5px solid var(--text-2);
+      transform: rotate(45deg);
+    }
+    @keyframes float {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(7px); }
+    }
+
+    /* ── SHARED SECTION STYLES ── */
+    section { padding: 90px 6%; }
+    .inner { max-width: 900px; margin: 0 auto; }
+    .sec-tag {
+      display: block;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-light);
+      margin-bottom: 12px;
+    }
+    .sec-title {
+      font-family: 'Fraunces', serif;
+      font-size: clamp(26px, 3.8vw, 44px);
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--text-0);
+      margin-bottom: 16px;
+    }
+    .sec-lead {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text-1);
+      line-height: 1.85;
+      max-width: 640px;
+      margin-bottom: 52px;
+    }
+    .divider {
+      width: 40px; height: 2px;
+      background: var(--blue);
+      border: none;
+      margin: 20px 0 44px;
+    }
+
+    /* ── POR QUE AGORA ── */
+    #porque { background: var(--bg-1); }
+    .porque-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .card-base {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 32px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .card-base:hover {
+      border-color: var(--border-2);
+      transform: translateY(-2px);
+    }
+    .card-big-num {
+      font-family: 'Fraunces', serif;
+      font-size: 56px;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+    .card-title { font-size: 16px; font-weight: 500; color: var(--text-0); margin-bottom: 10px; }
+    .card-text  { font-size: 14px; color: var(--text-1); line-height: 1.8; font-weight: 300; }
+
+    /* ── METODOLOGIA ── */
+    #metodologia { background: var(--bg-0); }
+    .marcos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-bottom: 72px;
+    }
+    .marco {
+      border-radius: 14px;
+      padding: 28px 26px;
+      border: 1px solid var(--border);
+      position: relative;
+      transition: transform 0.25s, border-color 0.25s;
+    }
+    .marco:hover { transform: translateY(-2px); border-color: var(--border-2); }
+    .marco-accent {
+      width: 32px; height: 3px;
+      border-radius: 2px;
+      margin-bottom: 18px;
+    }
+    .marco-label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .marco-title { font-size: 15px; font-weight: 500; color: var(--text-0); margin-bottom: 10px; }
+    .marco-text  { font-size: 13px; color: var(--text-1); line-height: 1.8; font-weight: 300; }
+
+    /* ── TIMELINE ── */
+    #etapas { background: var(--bg-1); }
+    .timeline { display: flex; flex-direction: column; }
+    .t-item {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 0;
+    }
+    .t-left {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 2px;
+    }
+    .t-dot {
+      width: 13px; height: 13px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .t-dot.done    { background: var(--teal); box-shadow: 0 0 0 4px rgba(30,178,128,0.12); }
+    .t-dot.active  { background: var(--blue); box-shadow: 0 0 0 4px rgba(33,150,216,0.15); animation: ring 2.5s infinite; }
+    .t-dot.pending { background: transparent; border: 2px solid var(--border-2); }
+    @keyframes ring {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(33,150,216,0.15); }
+      50%       { box-shadow: 0 0 0 7px rgba(33,150,216,0.07); }
+    }
+    .t-line {
+      flex: 1;
+      width: 1px;
+      background: var(--border-2);
+      min-height: 32px;
+    }
+    .t-body { padding: 0 0 40px 24px; }
+    .t-badge {
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      padding: 2px 9px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    .badge-done   { background: rgba(30,178,128,0.12); color: var(--teal-light); }
+    .badge-active { background: rgba(33,150,216,0.12); color: var(--blue-light); }
+    .badge-next   { background: rgba(120,180,220,0.07); color: var(--text-2); }
+    .t-title { font-size: 15px; font-weight: 500; color: var(--text-0); margin-bottom: 6px; }
+    .t-text  { font-size: 13px; color: var(--text-1); line-height: 1.8; font-weight: 300; }
+
+    /* ── GEAR ── */
+    #gear { background: var(--bg-0); }
+    .gear-wrap { display: flex; flex-wrap: wrap; gap: 10px; }
+    .gear-pill {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 7px 16px 7px 7px;
+      transition: border-color 0.2s;
+    }
+    .gear-pill:hover { border-color: var(--border-2); }
+    .avatar {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 500;
+      flex-shrink: 0;
+      letter-spacing: 0.04em;
+    }
+    .gear-name { font-size: 13px; color: var(--text-0); font-weight: 400; }
+
+    /* ── PRODUTOS ── */
+    #produtos { background: var(--bg-1); }
+    .produtos-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .produto-card {
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .produto-card:hover { border-color: var(--border-2); transform: translateY(-2px); }
+    .produto-icon {
+      width: 44px; height: 44px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      margin-bottom: 18px;
+    }
+
+    /* ── PARTICIPAR ── */
+    #participar { background: var(--bg-0); }
+    .p-list { display: flex; flex-direction: column; gap: 10px; }
+    .p-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      background: var(--bg-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 22px 26px;
+      text-decoration: none;
+      cursor: default;
+      transition: border-color 0.25s;
+    }
+    .p-item:hover { border-color: var(--border-2); }
+    .p-icon {
+      width: 42px; height: 42px;
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .p-content { flex: 1; }
+    .p-title {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-0);
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .p-text { font-size: 13px; color: var(--text-1); line-height: 1.8; font-weight: 300; }
+    .badge-soon {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      padding: 2px 9px;
+      border-radius: 4px;
+      background: rgba(217,154,37,0.12);
+      color: var(--amber-light);
+      font-weight: 500;
+    }
+    .p-arrow {
+      color: var(--text-2);
+      font-size: 18px;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    /* ── EVENTO ── */
+    #evento { background: var(--bg-1); }
+    .evento-card {
+      background: var(--bg-0);
+      border: 1px solid var(--border-2);
+      border-radius: 16px;
+      padding: 40px 44px;
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 44px;
+      align-items: center;
+    }
+    .evento-cal {
+      background: var(--blue);
+      border-radius: 13px;
+      padding: 18px 22px 14px;
+      text-align: center;
+      min-width: 80px;
+    }
+    .evento-cal-month {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.65);
+      display: block;
+      margin-bottom: 2px;
+    }
+    .evento-cal-day {
+      font-family: 'Fraunces', serif;
+      font-size: 44px;
+      font-weight: 700;
+      color: white;
+      line-height: 1;
+      display: block;
+    }
+    .evento-cal-year {
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      margin-top: 2px;
+      display: block;
+    }
+    .evento-name {
+      font-family: 'Fraunces', serif;
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-0);
+      margin-bottom: 20px;
+      line-height: 1.25;
+    }
+    .evento-infos { display: flex; flex-direction: column; gap: 10px; }
+    .evento-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--text-1);
+      font-weight: 300;
+    }
+    .info-bullet {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--blue);
+      flex-shrink: 0;
+    }
+
+    /* ── CONTATO ── */
+    #contato {
+      background: var(--bg-0);
+      text-align: center;
+    }
+    #contato .inner { display: flex; flex-direction: column; align-items: center; }
+    #contato .sec-tag, #contato .sec-title { text-align: center; }
+    .contato-email {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-2);
+      border: 1px solid var(--border-2);
+      border-radius: 10px;
+      padding: 15px 28px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--blue-light);
+      text-decoration: none;
+      letter-spacing: 0.01em;
+      transition: all 0.2s;
+    }
+    .contato-email:hover { background: var(--bg-3); border-color: rgba(33,150,216,0.4); }
+    .contato-email svg { flex-shrink: 0; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--bg-0);
+      border-top: 1px solid var(--border);
+      padding: 28px 6%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .footer-left { font-size: 12px; color: var(--text-2); letter-spacing: 0.03em; }
+    .footer-left strong { color: var(--text-1); font-weight: 500; }
+    .footer-right { font-size: 11px; color: var(--text-2); letter-spacing: 0.04em; text-transform: uppercase; }
+
+    /* ── ANIMATIONS ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s ease, transform 0.65s ease;
+    }
+    .reveal.r-d1 { transition-delay: 0.1s; }
+    .reveal.r-d2 { transition-delay: 0.2s; }
+    .reveal.r-d3 { transition-delay: 0.3s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* hero self-animates */
+    .hero-eyebrow { animation: fadeUp 0.7s ease 0.1s both; }
+    .hero-title   { animation: fadeUp 0.7s ease 0.25s both; }
+    .hero-sub     { animation: fadeUp 0.7s ease 0.4s both; }
+    .hero-ctas    { animation: fadeUp 0.7s ease 0.55s both; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 840px) {
+      .nav-links { display: none; }
+      .porque-grid,
+      .marcos-grid,
+      .produtos-grid { grid-template-columns: 1fr; }
+      .evento-card { grid-template-columns: 1fr; gap: 24px; padding: 28px 24px; }
+      section { padding: 64px 5%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-brand">PPG<em>·</em>CST &nbsp;/&nbsp; INPE</a>
+    <ul class="nav-links">
+      <li><a href="#porque">Por que agora</a></li>
+      <li><a href="#metodologia">Metodologia</a></li>
+      <li><a href="#gear">GEAR</a></li>
+      <li><a href="#participar">Participar</a></li>
+      <li><a href="#evento" class="nav-cta">21/05 →</a></li>
+    </ul>
+  </nav>
+
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-bg-dots"></div>
+    <div class="hero-bg-glow"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Programa de Pós-Graduação em Ciência do Sistema Terrestre</div>
+      <h1 class="hero-title">
+        Construção <strong>Participativa</strong><br>
+        do Projeto Político-Pedagógico
+      </h1>
+      <p class="hero-sub">
+        Um processo coletivo para definir os próximos 15 anos do PPG-CST —
+        com a voz de toda a comunidade do programa.
+      </p>
+      <div class="hero-ctas">
+        <a href="#evento" class="btn-primary">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Próxima reunião: 21/05/2026
+        </a>
+        <a href="#porque" class="btn-ghost">Saiba mais
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="scroll-hint" aria-hidden="true">
+      <span>rolar</span>
+      <div class="chevron"></div>
+    </div>
+  </section>
+
+
+  <!-- POR QUE AGORA -->
+  <section id="porque">
+    <div class="inner">
+      <span class="sec-tag">Por que agora?</span>
+      <h2 class="sec-title">Um marco de planejamento<br>estratégico e institucional</h2>
+      <hr class="divider">
+      <div class="porque-grid">
+        <div class="card-base reveal">
+          <div class="card-big-num" style="color:var(--blue); opacity:0.3;">15</div>
+          <div class="card-title">Ciclo de maturidade institucional</div>
+          <p class="card-text">Com 15 anos de produção científica consolidada, o PPG-CST alcança um ciclo de maturidade que torna propícia e estratégica uma revisão estruturada de seus fundamentos, processos e trajetória. Este é o momento de sistematizar conquistas e projetar os próximos horizontes do programa com rigor e intencionalidade.</p>
+        </div>
+        <div class="card-base reveal r-d1">
+          <div class="card-big-num" style="color:var(--teal); opacity:0.3;">≡</div>
+          <div class="card-title">Recomendações da CAPES</div>
+          <p class="card-text">Uma avaliação recente da CAPES trouxe uma série de recomendações e apontou necessidades de ajustes que, se não enfrentadas por um processo de planejamento transversal e participativo, tendem a fragilizar o programa ao longo do tempo.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- METODOLOGIA -->
+  <section id="metodologia">
+    <div class="inner">
+      <span class="sec-tag">Metodologia</span>
+      <h2 class="sec-title">O que é o PPP?</h2>
+      <p class="sec-lead">O PPP é um instrumento de planejamento estratégico que integra dimensões conceituais, diagnósticas e operacionais em um único processo participativo. Adotado como ferramenta central de gestão acadêmica, estrutura-se em três marcos que orientam as decisões do programa com embasamento técnico e visão de longo prazo.</p>
+      <div class="marcos-grid">
+        <div class="marco reveal" style="background:rgba(33,150,216,0.05);">
+          <div class="marco-accent" style="background:var(--blue);"></div>
+          <div class="marco-label" style="color:var(--blue-light);">Marco 01 — Conceitual</div>
+          <div class="marco-title">Bases e valores do programa</div>
+          <p class="marco-text">Reflexão coletiva sobre os fundamentos teóricos, filosóficos e políticos que sustentam o PPG-CST — incluindo a visão de futuro, os princípios orientadores e os compromissos ético-políticos com a sociedade.</p>
+        </div>
+        <div class="marco reveal r-d1" style="background:rgba(30,178,128,0.05);">
+          <div class="marco-accent" style="background:var(--teal);"></div>
+          <div class="marco-label" style="color:var(--teal-light);">Marco 02 — Situacional</div>
+          <div class="marco-title">Leitura crítica da realidade institucional</div>
+          <p class="marco-text">Diagnóstico do contexto institucional e organizacional do programa: estrutura, governança, perfil docente e discente, linhas de pesquisa, forças, fragilidades, oportunidades e ameaças.</p>
+        </div>
+        <div class="marco reveal r-d2" style="background:rgba(217,154,37,0.05);">
+          <div class="marco-accent" style="background:var(--amber);"></div>
+          <div class="marco-label" style="color:var(--amber-light);">Marco 03 — Operacional</div>
+          <div class="marco-title">Plano de ação e metas</div>
+          <p class="marco-text">Definição de metas para os próximos 5, 10 e 15 anos, com indicadores e estratégias de monitoramento para materializar a visão de futuro construída coletivamente.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ETAPAS / TIMELINE -->
+  <section id="etapas">
+    <div class="inner">
+      <span class="sec-tag">Como o processo será conduzido?</span>
+      <h2 class="sec-title">Método de Colaboração Dialógica</h2>
+      <hr class="divider">
+      <div class="timeline">
+
+        <div class="t-item reveal">
+          <div class="t-left">
+            <div class="t-dot done"></div>
+            <div class="t-line"></div>
+          </div>
+          <div class="t-body">
+            <span class="t-badge badge-done">Concluída</span>
+            <div class="t-title">Mobilização e Diagnóstico Participativo</div>
+            <p class="t-text">Aplicação de questionários de percepção com todos os segmentos da comunidade: discentes, docentes, coordenadores e egressos.</p>
+          </div>
+        </div>
+
+        <div class="t-item reveal r-d1">
+          <div class="t-left">
+            <div class="t-dot active"></div>
+            <div class="t-line"></div>
+          </div>
+          <div class="t-body">
+            <span class="t-badge badge-active">Em andamento</span>
+            <div class="t-title">Análise e Sistematização</div>
+            <p class="t-text">Análise qualitativa e quantitativa dos dados coletados na etapa anterior e escrita de relatório a ser divulgado para todos os participantes do processo.</p>
+          </div>
+        </div>
+
+        <div class="t-item reveal r-d2">
+          <div class="t-left">
+            <div class="t-dot pending"></div>
+            <div class="t-line"></div>
+          </div>
+          <div class="t-body">
+            <span class="t-badge badge-next">Próxima</span>
+            <div class="t-title">Diálogos com a Comunidade DIIAV</div>
+            <p class="t-text">Reuniões para apresentar os resultados e dialogar sobre eles, a partir do Método de Diálogo Reflexivo-Deliberativo. As contribuições serão organizadas no documento-base do PPP.</p>
+          </div>
+        </div>
+
+        <div class="t-item reveal">
+          <div class="t-left">
+            <div class="t-dot pending"></div>
+            <div class="t-line"></div>
+          </div>
+          <div class="t-body">
+            <span class="t-badge badge-next">Futura</span>
+            <div class="t-title">Consolidação e Aprovação</div>
+            <p class="t-text">O documento final do PPP será submetido à revisão dos participantes do processo e, posteriormente, publicado.</p>
+          </div>
+        </div>
+
+        <div class="t-item reveal r-d1">
+          <div class="t-left">
+            <div class="t-dot pending"></div>
+          </div>
+          <div class="t-body">
+            <span class="t-badge badge-next">Futura</span>
+            <div class="t-title">Início da Implementação</div>
+            <p class="t-text">Constituição de uma comissão de implementação e transparência, responsável pela execução das atividades do 1º ciclo (5 anos) e pela elaboração de relatórios anuais de acompanhamento de metas e indicadores.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- GEAR -->
+  <section id="gear">
+    <div class="inner">
+      <span class="sec-tag">Quem conduz o processo?</span>
+      <h2 class="sec-title">O Grupo de Escuta,<br>Análise e Registro — GEAR</h2>
+      <p class="sec-lead">Constituído voluntariamente por representantes de diferentes segmentos da comunidade, o GEAR coordena todas as etapas, garante a participação ampla e sistematiza os resultados em documentos que expressem fielmente a voz coletiva do programa.</p>
+      <div class="gear-wrap reveal">
+        <div class="gear-pill">
+          <div class="avatar" style="background:rgba(33,150,216,0.2);color:var(--blue-light);">AG</div>
+          <span class="gear-name">André Gonçalves</span>
+        </div>
+        <div class="gear-pill">
+          <div class="avatar" style="background:rgba(30,178,128,0.2);color:var(--teal-light);">MM</div>
+          <span class="gear-name">Minella Martins</span>
+        </div>
+        <div class="gear-pill">
+          <div class="avatar" style="background:rgba(217,154,37,0.2);color:var(--amber-light);">GB</div>
+          <span class="gear-name">Gilney Bezerra</span>
+        </div>
+        <div class="gear-pill">
+          <div class="avatar" style="background:rgba(126,111,212,0.2);color:var(--purple-light);">MC</div>
+          <span class="gear-name">Meiriele Cumplido</span>
+        </div>
+        <div class="gear-pill">
+          <div class="avatar" style="background:rgba(33,150,216,0.2);color:var(--blue-light);">KD</div>
+          <span class="gear-name">Karolina Dias</span>
+        </div>
+        <div class="gear-pill">
+          <div class="avatar" style="background:rgba(30,178,128,0.2);color:var(--teal-light);">CK</div>
+          <span class="gear-name">Celly Kelly</span>
+        </div>
+        <div class="gear-pill">
+          <div class="avatar" style="background:rgba(217,154,37,0.2);color:var(--amber-light);">LB</div>
+          <span class="gear-name">Laura Borma</span>
+        </div>
+        <div class="gear-pill">
+          <div class="avatar" style="background:rgba(217,90,58,0.2);color:var(--coral-light);">EB</div>
+          <span class="gear-name">Evandro Branco</span>
+        </div>
+        <div class="gear-pill">
+          <div class="avatar" style="background:rgba(126,111,212,0.2);color:var(--purple-light);">RM</div>
+          <span class="gear-name">Rafael Monteiro</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- PRODUTOS -->
+  <section id="produtos">
+    <div class="inner">
+      <span class="sec-tag">O que vamos construir juntos?</span>
+      <h2 class="sec-title">Produtos esperados do processo</h2>
+      <hr class="divider">
+      <div class="produtos-grid">
+        <div class="produto-card reveal">
+          <div class="produto-icon" style="background:rgba(33,150,216,0.1);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--blue-light)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          </div>
+          <div class="card-title">Relatório Diagnóstico</div>
+          <p class="card-text">Análise da percepção de interlocutores do PPG-CST, reunindo dados quantitativos e qualitativos coletados ao longo do processo.</p>
+        </div>
+        <div class="produto-card reveal r-d1">
+          <div class="produto-icon" style="background:rgba(30,178,128,0.1);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--teal-light)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          </div>
+          <div class="card-title">Documento do PPP</div>
+          <p class="card-text">O Projeto Político-Pedagógico completo, com plano de ação, metas, indicadores e cronograma para os próximos 5, 10 e 15 anos.</p>
+        </div>
+        <div class="produto-card reveal r-d2">
+          <div class="produto-icon" style="background:rgba(217,154,37,0.1);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--amber-light)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          </div>
+          <div class="card-title">Proposta de Mestrado</div>
+          <p class="card-text">Documento de criação do mestrado no âmbito do PPG-CST, construído como parte integrante do processo de reestruturação do programa.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- PARTICIPAR -->
+  <section id="participar">
+    <div class="inner">
+      <span class="sec-tag">Sua voz importa</span>
+      <h2 class="sec-title">Como você pode participar?</h2>
+      <p class="sec-lead">O PPP só será legítimo se refletir a voz de toda a comunidade. O processo foi desenhado para garantir múltiplos momentos de participação, cada um com um propósito claro e acessível a todos os segmentos do programa.</p>
+      <div class="p-list">
+        <div class="p-item reveal">
+          <div class="p-icon" style="background:rgba(33,150,216,0.1);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--blue-light)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="p-content">
+            <div class="p-title">
+              Questionário de percepção
+              <span class="badge-soon">Em breve</span>
+            </div>
+            <p class="p-text">Formulário estruturado para todos os segmentos — discentes, docentes, egressos e coordenadores. É o ponto de partida do diagnóstico coletivo.</p>
+          </div>
+          <div class="p-arrow">→</div>
+        </div>
+        <div class="p-item reveal r-d1">
+          <div class="p-icon" style="background:rgba(30,178,128,0.1);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal-light)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <div class="p-content">
+            <div class="p-title">
+              Sessões de diálogo
+              <span class="badge-soon">Em breve</span>
+            </div>
+            <p class="p-text">Encontros abertos a toda a comunidade, dedicados à construção coletiva dos marcos conceitual, situacional e operacional.</p>
+          </div>
+          <div class="p-arrow">→</div>
+        </div>
+        <div class="p-item reveal r-d2">
+          <div class="p-icon" style="background:rgba(217,154,37,0.1);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--amber-light)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="p-content">
+            <div class="p-title">
+              Co-produção e Validação do documento final
+              <span class="badge-soon">Em breve</span>
+            </div>
+            <p class="p-text">Antes da aprovação formal, o documento do PPP será aberto para co-produção e validação coletiva, garantindo que o resultado final expresse fielmente a voz de todos os segmentos participantes.</p>
+          </div>
+          <div class="p-arrow">→</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- EVENTO -->
+  <section id="evento">
+    <div class="inner">
+      <span class="sec-tag">Próximo evento</span>
+      <h2 class="sec-title" style="margin-bottom:36px;">Convite aberto a toda a comunidade</h2>
+      <div class="evento-card reveal">
+        <div class="evento-cal">
+          <span class="evento-cal-month">Maio</span>
+          <span class="evento-cal-day">21</span>
+          <span class="evento-cal-year">2026</span>
+        </div>
+        <div>
+          <div class="evento-name">Apresentação do Processo à DIIAV</div>
+          <div class="evento-infos">
+            <div class="evento-info">
+              <div class="info-bullet"></div>
+              Das 15h30 às 17h30
+            </div>
+            <div class="evento-info">
+              <div class="info-bullet"></div>
+              Sala 27 — INPE ou via link Zoom
+            </div>
+            <div class="evento-info">
+              <div class="info-bullet"></div>
+              Aberto a toda a comunidade DIIAV
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- CONTATO -->
+  <section id="contato">
+    <div class="inner">
+      <span class="sec-tag">Contato</span>
+      <h2 class="sec-title">Tem dúvidas ou quer saber mais?</h2>
+      <p class="sec-lead" style="text-align:center; margin-left:auto; margin-right:auto;">Entre em contato com o GEAR. Estamos disponíveis para responder perguntas sobre o processo, as etapas, as formas de participação ou qualquer outro aspecto da construção do PPP.</p>
+      <a href="mailto:ppp.pgcst@gmail.com" class="contato-email reveal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        ppp.pgcst@gmail.com
+      </a>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-left">
+      <strong>PPG-CST</strong> · Programa de Pós-Graduação em Ciência do Sistema Terrestre · INPE
+    </div>
+    <div class="footer-right">São José dos Campos · SP</div>
+  </footer>
+
+
+  <script>
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // Active nav link highlight on scroll
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+    const scrollSpy = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          navLinks.forEach(a => {
+            a.style.color = a.getAttribute('href') === '#' + e.target.id
+              ? 'var(--text-0)'
+              : '';
+          });
+        }
+      });
+    }, { threshold: 0.4 });
+    sections.forEach(s => scrollSpy.observe(s));
+  </script>
+
+</body>
+</html>
